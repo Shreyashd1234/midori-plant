@@ -261,8 +261,49 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
         
-        if (document.querySelector('.modern-cta') && document.querySelector('.custom-brand-logo')) {
-            obs.disconnect(); // Stop observing once both are injected
+        // Dynamically replace the Midori logo in the footer
+        const siteFooter = document.querySelector('footer') || document.querySelector('[class*="footer"]');
+        if (siteFooter && !siteFooter.querySelector('.custom-footer-logo')) {
+            const svgs = siteFooter.querySelectorAll('svg');
+            let replaced = false;
+            for (let svg of svgs) {
+                // Ignore small social icons (usually use lucide class or are small)
+                if (!svg.classList.contains('lucide') && svg.getAttribute('width') !== '24' && svg.getAttribute('width') !== '15') {
+                    svg.style.display = 'none';
+                    const newLogo = document.createElement('img');
+                    newLogo.src = 'assets/home-logo.png';
+                    newLogo.className = 'custom-footer-logo';
+                    newLogo.style.height = '64px'; // Beautiful prominent footer size
+                    newLogo.style.width = 'auto';
+                    newLogo.style.objectFit = 'contain';
+                    newLogo.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))'; 
+                    newLogo.style.cursor = 'pointer';
+                    svg.parentNode.insertBefore(newLogo, svg);
+                    replaced = true;
+                    break;
+                }
+            }
+            if (!replaced) {
+                // Fallback: If it's text, look for "Midori"
+                const elements = siteFooter.querySelectorAll('*');
+                for (let el of elements) {
+                    if (el.children.length === 0 && el.textContent.trim().toLowerCase().includes('midori')) {
+                        el.textContent = '';
+                        const newLogo = document.createElement('img');
+                        newLogo.src = 'assets/home-logo.png';
+                        newLogo.className = 'custom-footer-logo';
+                        newLogo.style.height = '64px';
+                        newLogo.style.width = 'auto';
+                        newLogo.style.objectFit = 'contain';
+                        el.appendChild(newLogo);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        if (document.querySelector('.modern-cta') && document.querySelector('.custom-brand-logo') && siteFooter?.querySelector('.custom-footer-logo')) {
+            obs.disconnect(); // Stop observing once all are injected
         }
     });
     observer.observe(document.body, { childList: true, subtree: true });
