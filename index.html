@@ -110,12 +110,25 @@ if(window.self!==window.top){
             pointer-events: none !important;
         }
 
-        /* Clean up footer: hide the weird decorative badge/mark */
-        footer svg:not(.lucide), [class*="footer"] svg:not(.lucide) {
+        /* Clean up footer: completely remove the logo as requested */
+        footer svg:not(.lucide), [class*="footer"] svg:not(.lucide),
+        footer img, [class*="footer"] img,
+        .custom-footer-logo, .footer-logo, .footer-brand {
             display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
         }
-        footer img:not(.custom-footer-logo), [class*="footer"] img:not(.custom-footer-logo) {
+
+        /* Remove gradients across sections and enforce a beautiful solid premium main color */
+        body, main, section, header, footer, .hero, .plate-section, [class*="section"] {
+            background-image: none !important; /* Kills linear-gradients */
+            background-color: #1a2717 !important; /* Extremely premium solid dark green */
+        }
+        
+        /* Hide any gradient overlay washes */
+        .hero-wash, .plate-wash, [class*="wash"], [class*="gradient"] {
             display: none !important;
+            opacity: 0 !important;
         }
 
         /* Clean, dedicated CTA button styles */
