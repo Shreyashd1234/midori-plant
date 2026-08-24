@@ -222,7 +222,7 @@ if(window.self!==window.top){
             })(document, window.posthog || []);
             posthog.init("phc_DbsPb39SRc8z3EiQ6Dhj6ikv4H4rTKcht9d4sZSesceP", {
                 api_host: "https://ap.emergent.sh",
-                person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well,
+                person_profiles: "identified_only",
                 session_recording: {
                     recordCrossOriginIframes: true,
                     capturePerformance: false,
@@ -247,48 +247,48 @@ document.addEventListener("DOMContentLoaded", () => {
                 </svg>
                 <span>Enquire on WhatsApp</span>
             `;
-            // Insert it securely below the meta info
             heroMeta.parentNode.insertBefore(btn, heroMeta.nextSibling);
         }
 
-        // Dynamically replace the Midori logo with custom brand logo
         const heroTop = document.querySelector('.hero-top');
         if (heroTop && !document.querySelector('.custom-brand-logo')) {
             const oldLogo = heroTop.children[0];
             if (oldLogo) {
-                oldLogo.style.display = 'none'; // hide the old logo
+                oldLogo.style.display = 'none';
                 const newLogo = document.createElement('img');
                 newLogo.src = 'assets/home-logo.png';
                 newLogo.className = 'custom-brand-logo';
-                newLogo.style.height = '72px'; // beautiful size
+                newLogo.style.height = '72px';
                 newLogo.style.width = 'auto';
                 newLogo.style.objectFit = 'contain';
-                newLogo.style.filter = 'drop-shadow(0 4px 6px rgba(0,0,0,0.15))'; // modern depth
+                newLogo.style.filter = 'drop-shadow(0 4px 6px rgba(0,0,0,0.15))';
                 newLogo.style.cursor = 'pointer';
                 heroTop.insertBefore(newLogo, oldLogo);
             }
         }
         
-        // Dynamically replace the Midori logo in the footer
         const siteFooter = document.querySelector('footer') || document.querySelector('[class*="footer"]');
         if (siteFooter && !siteFooter.querySelector('.custom-footer-logo')) {
             const svgs = siteFooter.querySelectorAll('svg');
             let replaced = false;
             for (let svg of svgs) {
-                // Ignore small social icons (usually use lucide class or are small)
+                // Ignore small social icons
                 if (!svg.classList.contains('lucide') && svg.getAttribute('width') !== '24' && svg.getAttribute('width') !== '15') {
+                    // Hide EVERY non-social SVG we find to get rid of leftover abstract leaves
                     svg.style.display = 'none';
-                    const newLogo = document.createElement('img');
-                    newLogo.src = 'assets/home-logo.png';
-                    newLogo.className = 'custom-footer-logo';
-                    newLogo.style.height = '64px'; // Beautiful prominent footer size
-                    newLogo.style.width = 'auto';
-                    newLogo.style.objectFit = 'contain';
-                    newLogo.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))'; 
-                    newLogo.style.cursor = 'pointer';
-                    svg.parentNode.insertBefore(newLogo, svg);
-                    replaced = true;
-                    break;
+                    // Only insert the new logo image once
+                    if (!replaced) {
+                        const newLogo = document.createElement('img');
+                        newLogo.src = 'assets/home-logo.png';
+                        newLogo.className = 'custom-footer-logo';
+                        newLogo.style.height = '64px';
+                        newLogo.style.width = 'auto';
+                        newLogo.style.objectFit = 'contain';
+                        newLogo.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))'; 
+                        newLogo.style.cursor = 'pointer';
+                        svg.parentNode.insertBefore(newLogo, svg);
+                        replaced = true;
+                    }
                 }
             }
             if (!replaced) {
@@ -311,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         if (document.querySelector('.modern-cta') && document.querySelector('.custom-brand-logo') && siteFooter?.querySelector('.custom-footer-logo')) {
-            obs.disconnect(); // Stop observing once all are injected
+            obs.disconnect();
         }
     });
     observer.observe(document.body, { childList: true, subtree: true });
