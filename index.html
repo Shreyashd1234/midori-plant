@@ -110,6 +110,14 @@ if(window.self!==window.top){
             pointer-events: none !important;
         }
 
+        /* Clean up footer: hide the weird decorative badge/mark */
+        footer svg:not(.lucide), [class*="footer"] svg:not(.lucide) {
+            display: none !important;
+        }
+        footer img:not(.custom-footer-logo), [class*="footer"] img:not(.custom-footer-logo) {
+            display: none !important;
+        }
+
         /* Clean, dedicated CTA button styles */
         .modern-cta {
             background: linear-gradient(135deg, #25D366, #128C7E) !important;
