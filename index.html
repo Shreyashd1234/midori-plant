@@ -241,7 +241,28 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             // Insert it securely below the meta info
             heroMeta.parentNode.insertBefore(btn, heroMeta.nextSibling);
-            obs.disconnect(); // Stop observing once injected
+        }
+
+        // Dynamically replace the Midori logo with custom brand logo
+        const heroTop = document.querySelector('.hero-top');
+        if (heroTop && !document.querySelector('.custom-brand-logo')) {
+            const oldLogo = heroTop.children[0];
+            if (oldLogo) {
+                oldLogo.style.display = 'none'; // hide the old logo
+                const newLogo = document.createElement('img');
+                newLogo.src = 'assets/home-logo.png';
+                newLogo.className = 'custom-brand-logo';
+                newLogo.style.height = '72px'; // beautiful size
+                newLogo.style.width = 'auto';
+                newLogo.style.objectFit = 'contain';
+                newLogo.style.filter = 'drop-shadow(0 4px 6px rgba(0,0,0,0.15))'; // modern depth
+                newLogo.style.cursor = 'pointer';
+                heroTop.insertBefore(newLogo, oldLogo);
+            }
+        }
+        
+        if (document.querySelector('.modern-cta') && document.querySelector('.custom-brand-logo')) {
+            obs.disconnect(); // Stop observing once both are injected
         }
     });
     observer.observe(document.body, { childList: true, subtree: true });
