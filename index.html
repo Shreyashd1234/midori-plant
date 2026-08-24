@@ -110,25 +110,12 @@ if(window.self!==window.top){
             pointer-events: none !important;
         }
 
-        /* Clean up footer: completely remove the logo as requested */
-        footer svg:not(.lucide), [class*="footer"] svg:not(.lucide),
-        footer img, [class*="footer"] img,
-        .custom-footer-logo, .footer-logo, .footer-brand {
+        /* Clean up footer: hide the weird decorative badge/mark */
+        footer svg:not(.lucide), [class*="footer"] svg:not(.lucide) {
             display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
         }
-
-        /* Remove gradients across sections and enforce a beautiful solid premium main color */
-        body, main, section, header, footer, .hero, .plate-section, [class*="section"] {
-            background-image: none !important; /* Kills linear-gradients */
-            background-color: #1a2717 !important; /* Extremely premium solid dark green */
-        }
-        
-        /* Hide any gradient overlay washes */
-        .hero-wash, .plate-wash, [class*="wash"], [class*="gradient"] {
+        footer img:not(.custom-footer-logo), [class*="footer"] img:not(.custom-footer-logo) {
             display: none !important;
-            opacity: 0 !important;
         }
 
         /* Clean, dedicated CTA button styles */
@@ -283,40 +270,42 @@ document.addEventListener("DOMContentLoaded", () => {
         const siteFooter = document.querySelector('footer') || document.querySelector('[class*="footer"]');
         if (siteFooter && !siteFooter.querySelector('.custom-footer-logo')) {
             const svgs = siteFooter.querySelectorAll('svg');
-            let replaced = false;
+            let targetContainer = null;
             for (let svg of svgs) {
-                // Ignore small social icons
                 if (!svg.classList.contains('lucide') && svg.getAttribute('width') !== '24' && svg.getAttribute('width') !== '15') {
-                    // Hide EVERY non-social SVG we find to get rid of leftover abstract leaves
-                    svg.style.display = 'none';
-                    // Only insert the new logo image once
-                    if (!replaced) {
-                        const newLogo = document.createElement('img');
-                        newLogo.src = 'assets/home-logo.png';
-                        newLogo.className = 'custom-footer-logo';
-                        newLogo.style.height = '64px';
-                        newLogo.style.width = 'auto';
-                        newLogo.style.objectFit = 'contain';
-                        newLogo.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))'; 
-                        newLogo.style.cursor = 'pointer';
-                        svg.parentNode.insertBefore(newLogo, svg);
-                        replaced = true;
-                    }
+                    // We found the original logo SVG. Grab its container.
+                    targetContainer = svg.parentNode;
+                    break; // Just need the first one to find the container
                 }
             }
-            if (!replaced) {
+            
+            if (targetContainer && targetContainer !== siteFooter) {
+                // Completely clear out the original logo container (removes the extra cookie SVG and text)
+                targetContainer.innerHTML = '';
+                
+                const newLogo = document.createElement('img');
+                newLogo.src = 'assets/home-logo.png';
+                newLogo.className = 'custom-footer-logo';
+                newLogo.style.height = '64px';
+                newLogo.style.width = 'auto';
+                newLogo.style.objectFit = 'contain';
+                newLogo.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))'; 
+                newLogo.style.cursor = 'pointer';
+                targetContainer.appendChild(newLogo);
+            } else if (!targetContainer) {
                 // Fallback: If it's text, look for "Midori"
                 const elements = siteFooter.querySelectorAll('*');
                 for (let el of elements) {
                     if (el.children.length === 0 && el.textContent.trim().toLowerCase().includes('midori')) {
-                        el.textContent = '';
+                        const textContainer = el.parentNode !== siteFooter ? el.parentNode : el;
+                        textContainer.innerHTML = '';
                         const newLogo = document.createElement('img');
                         newLogo.src = 'assets/home-logo.png';
                         newLogo.className = 'custom-footer-logo';
                         newLogo.style.height = '64px';
                         newLogo.style.width = 'auto';
                         newLogo.style.objectFit = 'contain';
-                        el.appendChild(newLogo);
+                        textContainer.appendChild(newLogo);
                         break;
                     }
                 }
@@ -324,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         if (document.querySelector('.modern-cta') && document.querySelector('.custom-brand-logo') && siteFooter?.querySelector('.custom-footer-logo')) {
-            obs.disconnect();
+            obs.disconnect(); // Stop observing once all are injected
         }
     });
     observer.observe(document.body, { childList: true, subtree: true });
